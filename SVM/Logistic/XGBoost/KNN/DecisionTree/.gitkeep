@@ -1,0 +1,35 @@
+
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+import xgboost as xgb
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+
+models = {
+    "SVM": SVC(kernel='linear'),
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Decision Tree": DecisionTreeClassifier(),
+    "KNN": KNeighborsClassifier(),
+    "XGBoost": xgb.XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
+}
+
+results = {}
+
+for name, model in models.items():
+    print(f"\nTraining {name}...")
+    model.fit(X_train_hog, y_train_labels)
+    y_pred = model.predict(X_test_hog)
+    accuracy = accuracy_score(y_test_labels, y_pred)
+    results[name] = accuracy
+    print(f"{name} Accuracy: {accuracy:.4f}")
+    print("Confusion Matrix:\n", confusion_matrix(y_test_labels, y_pred))
+    print("Classification Report:\n", classification_report(y_test_labels, y_pred))
+
+plt.figure(figsize=(10, 6))
+plt.bar(results.keys(), results.values(), color='skyblue')
+plt.title("Model Accuracy Comparison")
+plt.xlabel("Models")
+plt.ylabel("Accuracy")
+plt.show()
